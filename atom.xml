@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://eugmill.github.io/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-02-04T17:33:39-05:00</updated>
+  <updated>2014-02-10T10:56:06-05:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,5 +12,23 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Hello World]]></title>
+    <link href="http://eugmill.github.io/blog/2014/02/10/hello-world/"/>
+    <updated>2014-02-10T10:54:09-05:00</updated>
+    <id>http://eugmill.github.io/blog/2014/02/10/hello-world</id>
+    <content type="html"><![CDATA[<p>Hello World, hi hi hi</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[First Post]]></title>
+    <link href="http://eugmill.github.io/blog/2014/02/04/first-post/"/>
+    <updated>2014-02-04T17:44:37-05:00</updated>
+    <id>http://eugmill.github.io/blog/2014/02/04/first-post</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
 </feed>
