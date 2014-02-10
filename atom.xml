@@ -4,7 +4,7 @@
   <title><![CDATA[My Octopress Blog]]></title>
   <link href="http://eugmill.github.io/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-02-10T12:01:56-05:00</updated>
+  <updated>2014-02-10T12:57:43-05:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Hello World]]></title>
+    <title type="html"><![CDATA[hello world]]></title>
     <link href="http://eugmill.github.io/blog/2014/02/10/hello-world/"/>
     <updated>2014-02-10T10:54:09-05:00</updated>
     <id>http://eugmill.github.io/blog/2014/02/10/hello-world</id>
