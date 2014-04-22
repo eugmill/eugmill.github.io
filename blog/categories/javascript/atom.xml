@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: javascript | My Octopress Blog]]></title>
+  <title><![CDATA[Category: javascript | Eugene Codes]]></title>
   <link href="http://eugmill.github.io/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-04-21T21:55:04-04:00</updated>
+  <updated>2014-04-21T22:05:53-04:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[Eugene Millerman]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Custom Javascript Events with 2048]]></title>
-    <link href="http://eugmill.github.io/blog/2014/03/28/hello-world/"/>
+    <link href="http://eugmill.github.io/blog/2014/03/28/custom-javascript-events-with-2048/"/>
     <updated>2014-03-28T11:54:09-04:00</updated>
-    <id>http://eugmill.github.io/blog/2014/03/28/hello-world</id>
+    <id>http://eugmill.github.io/blog/2014/03/28/custom-javascript-events-with-2048</id>
     <content type="html"><![CDATA[<p>After wasting a few hours playing with 2048, I realized that hey, I’m learning javascript, and 2048 is Javascript! I dove into the 2048 source code to see what I could find.</p>
 
 <p>2048 is entirely client side, which means there is no server to manage. A high level view of the code is below:</p>
