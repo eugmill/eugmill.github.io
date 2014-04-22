@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
-  <link href="http://eugmill.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: javascript | My Octopress Blog]]></title>
+  <link href="http://eugmill.github.io/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
   <updated>2014-04-21T21:55:04-04:00</updated>
   <id>http://eugmill.github.io/</id>
