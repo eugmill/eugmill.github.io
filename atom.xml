@@ -4,7 +4,7 @@
   <title><![CDATA[Eugene Codes]]></title>
   <link href="http://eugmill.github.io/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-04-21T22:05:53-04:00</updated>
+  <updated>2014-04-21T22:26:55-04:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Eugene Millerman]]></name>
@@ -32,6 +32,137 @@
 <li><em>local_storage_manager.js</em> – Deals with saving game state.</li>
 </ul>
 
+
+<p>Great! Let’s take a look. When the game is started, the GameManager constructor takes in the html_actuator, keyboard_input_manager and storage_manager objects as arguments. We do some basic initializing, and then this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">GameManager</span><span class="p">(</span><span class="nx">size</span><span class="p">,</span> <span class="nx">InputManager</span><span class="p">,</span> <span class="nx">Actuator</span><span class="p">,</span> <span class="nx">StorageManager</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">inputManager</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;move&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">move</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">inputManager</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;restart&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">inputManager</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;keepPlaying&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Up until then, I had only really dealt with pretty basic DOM events. Click, hover, submit, were dependable and familiar. Wtf is restart?</p>
+
+<h3>Custom Events</h3>
+
+<p>Some digging led me to reading about custom events in Javascript. Custom events are pretty much exactly like DOM events, but both the dispatches and the listeners are defined by you.</p>
+
+<p>From the mozilla documentation:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Listen for the event.</span>
+</span><span class='line'><span class="nx">elem</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;build&#39;</span><span class="p">,</span><span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{...},</span><span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// Dispath the event.</span>
+</span><span class='line'><span class="nx">elem</span><span class="p">.</span><span class="nx">dispathEvent</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can also include data in the events you throw.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CustomEvent</span><span class="p">(</span><span class="s1">&#39;build&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;detail&#39;</span><span class="o">:</span> <span class="nx">elem</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">time</span><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">eventHandler</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;The time is: &#39;</span><span class="o">+</span><span class="nx">e</span><span class="p">.</span><span class="nx">detail</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So where does that leave us? Let&rsquo;s take another look at the 2048 code.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">KeyboardInputManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">event</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">event</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">event</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">KeyboardInputManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">callbacks</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">event</span><span class="p">];</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">callbacks</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">callbacks</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">callback</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">KeyboardInputManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">listen</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'>  <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;keydown&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">...</span>
+</span><span class='line'>        <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">self</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s2">&quot;move&quot;</span><span class="p">,</span> <span class="nx">mapped</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">...</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The “on” method let’s us attach callbacks to custom events in the InputManager object. The emit function let’s us throw custom events with directional data attached to them.</p>
+
+<p>Let’s go over the steps in order</p>
+
+<ol>
+<li>I hit the up arrow on the keyboard</li>
+<li>The listen function captures it and “emits” a “move” event with data “up”</li>
+<li>The emit function calls the callback for “move”, which points to the move function in the GameManager.</li>
+</ol>
+
+
+<p>What about this weird bind thing? Well, the “on” method is defined in the InputManager object, but the callback function, “move”, is defined in the Gamemanager.</p>
+
+<p>We are telling the callback that when it refers to “this”, it should refer to the GameManager, not the InputManager, even though it will be called from the InputManager.</p>
+
+<p>In conclusion, reading through other people’s source code can be both educational and useful. Since I’ve started reading through it, not only have I become a better developer, but it makes playing 2048 itself a lot easier:</p>
+
+<p><img class="center" src="http://eugmill.github.io/images/2014-03-28-2048.png"></p>
 ]]></content>
   </entry>
   

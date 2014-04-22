@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | Eugene Codes]]></title>
   <link href="http://eugmill.github.io/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-04-21T22:05:53-04:00</updated>
+  <updated>2014-04-21T22:26:55-04:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Eugene Millerman]]></name>
@@ -32,6 +32,101 @@
 <li><em>local_storage_manager.js</em> – Deals with saving game state.</li>
 </ul>
 
+
+<p>Great! Let’s take a look. When the game is started, the GameManager constructor takes in the html_actuator, keyboard_input_manager and storage_manager objects as arguments. We do some basic initializing, and then this:</p>
+
+<p><code>javascript
+function GameManager(size, InputManager, Actuator, StorageManager) {
+  ...
+  this.inputManager.on("move", this.move.bind(this));
+  this.inputManager.on("restart", this.restart.bind(this));
+  this.inputManager.on("keepPlaying", this.restart.bind(this));
+  ...
+}
+</code></p>
+
+<p>Up until then, I had only really dealt with pretty basic DOM events. Click, hover, submit, were dependable and familiar. Wtf is restart?</p>
+
+<h3>Custom Events</h3>
+
+<p>Some digging led me to reading about custom events in Javascript. Custom events are pretty much exactly like DOM events, but both the dispatches and the listeners are defined by you.</p>
+
+<p>From the mozilla documentation:</p>
+
+<p>```javascript
+// Listen for the event.
+elem.addEventListener(&lsquo;build&rsquo;,function (e) {&hellip;},false);</p>
+
+<p>// Dispath the event.
+elem.dispathEvent(event);
+```</p>
+
+<p>You can also include data in the events you throw.
+```javascript
+var event = new CustomEvent(&lsquo;build&rsquo;, {&lsquo;detail&rsquo;: elem.dataset.time});</p>
+
+<p>function eventHandler(e) {
+  log(&lsquo;The time is: &rsquo;+e.detail);
+}
+```</p>
+
+<p>So where does that leave us? Let&rsquo;s take another look at the 2048 code.
+```javascript
+KeyboardInputManager.prototype.on = function (event, callback) {
+  if (!this.events[event]) {</p>
+
+<pre><code>this.events[event] = [];
+</code></pre>
+
+<p>  }
+  this.events[event].push(callback);
+};</p>
+
+<p>KeyboardInputManager.prototype.emit = function (event, data) {
+  var callbacks = this.events[event];
+  if (callbacks) {</p>
+
+<pre><code>callbacks.forEach(function (callback) {
+  callback(data);
+});
+</code></pre>
+
+<p>  }
+};</p>
+
+<p>KeyboardInputManager.prototype.listen = function () {
+  var self = this;
+  &hellip;
+  document.addEventListener(&ldquo;keydown&rdquo;, function (event) {</p>
+
+<pre><code>...
+    event.preventDefault();
+    self.emit("move", mapped);
+...
+</code></pre>
+
+<p>  });
+}
+```</p>
+
+<p>The “on” method let’s us attach callbacks to custom events in the InputManager object. The emit function let’s us throw custom events with directional data attached to them.</p>
+
+<p>Let’s go over the steps in order</p>
+
+<ol>
+<li>I hit the up arrow on the keyboard</li>
+<li>The listen function captures it and “emits” a “move” event with data “up”</li>
+<li>The emit function calls the callback for “move”, which points to the move function in the GameManager.</li>
+</ol>
+
+
+<p>What about this weird bind thing? Well, the “on” method is defined in the InputManager object, but the callback function, “move”, is defined in the Gamemanager.</p>
+
+<p>We are telling the callback that when it refers to “this”, it should refer to the GameManager, not the InputManager, even though it will be called from the InputManager.</p>
+
+<p>In conclusion, reading through other people’s source code can be both educational and useful. Since I’ve started reading through it, not only have I become a better developer, but it makes playing 2048 itself a lot easier:</p>
+
+<p><img class="center" src="/images/2014-03-28-2048.png"></p>
 ]]></content>
   </entry>
   
