@@ -246,6 +246,305 @@
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/03/03/what-is-rack/">What Is Rack, Really?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-03T08:09:39-05:00" pubdate data-updated="true">Mar 3<span>rd</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>After spending some time on Ruby foundations, we’ve finally moved onto the web at Flatiron School&#8217;s’s 5th Ruby class. The first topic we covered was <a href="http://rack.github.io/">rack</a>. According to the official site:</p>
+
+<blockquote><p>&ldquo;Rack provides a minimal interface between webservers supporting Ruby and Ruby frameworks.”</p></blockquote>
+
+<p>Well, that helps. Let’s break it down. What exactly is a web server? In its simplest form, you can implement a web server by doing the following:</p>
+
+<ol>
+<li>Listen to a port (80 most of the time) until a request comes in</li>
+<li>Deal with the request</li>
+<li>Output the response</li>
+<li>goto 1</li>
+</ol>
+
+
+<p>That sounds great! But we don’t want to implement that from scratch. Luckily, there are plenty of web servers already out there! Not only does rack let you easily switch between web servers, it also let’s you use the same middleware across different applications.</p>
+
+<h3>Taking a step back</h3>
+
+<p>In essence, there was a time where if you wanted to write a web app in Ruby, you had to write the interface to the server, which would change depending on the server you used. No more!</p>
+
+<p>Some big points to take away:</p>
+
+<ol>
+<li><p>Ruby is not a language for web development.
+Given the immense popularity of Rails, it’s easy to assume that Ruby was created as a language for web development. In reality, it was created as a general purpose language, and the tools for web development were added over time. Rack and rails are two such tools. The former is a framework, and Rack is the interface that connects the framework to the servers themselves.</p></li>
+<li><p>The web itself is language agnostic
+If we take a really big picture view of the web, it is just a bunch of http requests getting flung back and forth between computers. Everything is text and ultimately, whatever language is used on the server will have to create and receive http requests. Rack handles that aspect for Ruby applications.</p></li>
+</ol>
+
+
+<p>Sources:</p>
+
+<p><a href="http://stackoverflow.com/questions/15875941/creating-a-web-app-in-ruby-without-a-framework">http://stackoverflow.com/questions/15875941/creating-a-web-app-in-ruby-without-a-framework</a></p>
+
+<p><a href="http://www.youtube.com/watch?v=iJ-ZsWtHTIg">http://www.youtube.com/watch?v=iJ-ZsWtHTIg</a></p>
+
+<p><a href="http://rack.github.io/">http://rack.github.io/</a></p>
+
+<p><a href="http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html">http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2014/02/16/logging-with-battleship/">Logging With Battleship</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-16T08:19:22-05:00" pubdate data-updated="true">Feb 16<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>After the first week at flatiron School, I decided to <del>punish</del> challenge myself by joining the <a href="http://www.meetup.com/Ruby-Fight-Club/">Ruby Fight Club</a> meetup and signing myself up for the Battleship competition.</p>
+
+<p>The task at hand is to code a simple player class that plays battleship by doing two things:</p>
+
+<ol>
+<li>Placing its ships at the beginning of a game</li>
+<li>Given the state of the game board and the remaining ships, making a move by returning a set of x,y coordinates.</li>
+</ol>
+
+
+<p>My strategy loosely follows the <a href="http://www.datagenetics.com/blog/december32011/index.html">one posted by Nick Berry</a>. While I’ll save the details for another post, the strategy has two basic modes:</p>
+
+<ul>
+<li>Search mode – No ship locations are known.</li>
+<li>Hunt mode – There has been a hit but the ship hasn’t been sunk.</li>
+</ul>
+
+
+<p>In search mode, the algorithm tries to calculate the most likely places for a ship to have been hidden, using the known information about missed shots and remaining ships. In hunt mode, a ship has been hit and the algorithm looks around the successful hit until the ship has been sunk.</p>
+
+<p>At first I tried my best to be a good little Ruby student and go the test/behavior driven development route. This strategy worked well for setting up many of the early helper methods and even test some of the basic early game strategy. For instance, in the beginning of the game, the four cells in the center have the highest probability of having a ship, so the get_best_moves method should always include [4,4]. Rspec makes testing this ridiculously simple:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">before</span><span class="p">(</span><span class="ss">:each</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>  <span class="vi">@eugmill</span> <span class="o">=</span> <span class="no">EugmillPlayer</span><span class="o">.</span><span class="n">new</span><span class="p">()</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">describe</span> <span class="s2">&quot;#get_best_moves&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">it</span> <span class="s2">&quot;should include center coordinates for a blank board&quot;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">expect</span><span class="p">(</span><span class="vi">@eugmill</span><span class="o">.</span><span class="n">get_best_moves</span><span class="p">(</span><span class="n">board1</span><span class="p">,</span><span class="o">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="o">]</span><span class="p">))</span><span class="o">.</span><span class="n">to</span> <span class="kp">include</span><span class="p">(</span><span class="o">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Bigger problems</h2>
+
+<p>Testing with Rspec worked beautifully for these early game scenarios, when our Player object was still innocent and the board untouched by the violence of naval warfare. Difficulty arises when testing for and troubleshooting scenarios 20 moves into the game.</p>
+
+<p>Enter the logger class. Ruby’s built-in logger lets you write to files to keep track of what happens in your application. This way, when your player class makes a bizarre move halfway into the game, you can see exactly what was going on inside your class, as well as the list of moves leading up to that move. Here is an example of one of my log files:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">225023</span> <span class="c1">#89817]  INFO -- board states: </span>
+</span><span class='line'>   <span class="mi">0</span>  <span class="mi">1</span>  <span class="mi">2</span>  <span class="mi">3</span>  <span class="mi">4</span>  <span class="mi">5</span>  <span class="mi">6</span>  <span class="mi">7</span>  <span class="mi">8</span>  <span class="mi">9</span>
+</span><span class='line'><span class="mi">0</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">1</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">2</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span><span class="n">H</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">3</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">4</span> <span class="o">[</span> <span class="o">][</span><span class="n">H</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">5</span> <span class="o">[</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">6</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">7</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">8</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">9</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">225136</span> <span class="c1">#89817]  INFO -- search mode: Move 16,Getting best move...</span>
+</span><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">233883</span> <span class="c1">#89817]  INFO -- game state: Making move 4,0</span>
+</span><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">631970</span> <span class="c1">#89817]  INFO -- hit: It was a hit!!!</span>
+</span><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">632115</span> <span class="c1">#89817]  INFO -- hit: [[4, 1], [2, 2], [4, 0]]</span>
+</span><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">632235</span> <span class="c1">#89817]  INFO -- hit: Ship sunk!size:2</span>
+</span><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">632408</span> <span class="c1">#89817]  INFO -- hit: Sunk ship coords: [[4, 0], [4, 1]]</span>
+</span><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">633557</span> <span class="c1">#89817]  INFO -- board states: </span>
+</span><span class='line'>   <span class="mi">0</span>  <span class="mi">1</span>  <span class="mi">2</span>  <span class="mi">3</span>  <span class="mi">4</span>  <span class="mi">5</span>  <span class="mi">6</span>  <span class="mi">7</span>  <span class="mi">8</span>  <span class="mi">9</span>
+</span><span class='line'><span class="mi">0</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">1</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">2</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span><span class="n">H</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">3</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">4</span> <span class="o">[</span><span class="n">H</span><span class="o">][</span><span class="n">H</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">5</span> <span class="o">[</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">6</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">7</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">8</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span><span class="n">M</span><span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span><span class='line'><span class="mi">9</span> <span class="o">[</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">][</span> <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From this we know that on move 16, it takes a shot at [4,0]. We can do this for any move in the game. Now if we’re curious about why it made that move, we can also pull up our second log file which logs the probability distributions for the board at each move:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">233150</span> <span class="c1">#89817]  INFO -- pboard: Board for move 16</span>
+</span><span class='line'><span class="n">I</span><span class="p">,</span> <span class="o">[</span><span class="mi">2014</span><span class="o">-</span><span class="mo">02</span><span class="o">-</span><span class="mi">16</span><span class="ss">T14</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mo">05</span><span class="o">.</span><span class="mi">233301</span> <span class="c1">#89817]  INFO -- pboard: </span>
+</span><span class='line'><span class="o">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span><span class="mi">14</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">15</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span><span class="mi">19</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">17</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span><span class="mi">19</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">7</span> <span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">17</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span><span class="mi">22</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">21</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span><span class="mi">17</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">5</span> <span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">7</span> <span class="p">,</span> <span class="mi">7</span> <span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">17</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span><span class="mi">17</span><span class="p">,</span> <span class="mi">5</span> <span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">7</span> <span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">19</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span><span class="mi">17</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">7</span> <span class="p">,</span> <span class="mi">6</span> <span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">15</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">8</span> <span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">14</span><span class="o">]</span>
+</span><span class='line'><span class="o">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">19</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Skipping over how the probability weights are calculated, we can see that cell [4,0] has a weight of 22, which is the maximum for this board, and also the reason it was targeted.</p>
+
+<p>So how do we set up our logging? In this case, we initialize our loggers whenever a new Player object is created:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">EugmillPlayer</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span>
+</span><span class='line'>    <span class="vi">@movelogger</span> <span class="o">=</span> <span class="no">Logger</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;./players/logs/mylog.txt&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@boardlogger</span><span class="o">=</span> <span class="no">Logger</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;./players/logs/board_log.txt&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then, whenever we want to log a piece of information, we can call our logger</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="vi">@logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;board states&#39;</span><span class="p">){</span><span class="n">pprint_board</span><span class="p">(</span><span class="n">state</span><span class="p">)}</span>
+</span><span class='line'>  <span class="k">if</span> <span class="vi">@target_mode</span> <span class="o">==</span> <span class="ss">:search</span>
+</span><span class='line'>    <span class="vi">@logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;search mode&quot;</span><span class="p">)</span> <span class="p">{</span><span class="s2">&quot;Move </span><span class="si">#{</span><span class="vi">@move_counter</span><span class="si">}</span><span class="s2">,Getting best move...&quot;</span><span class="p">}</span>
+</span><span class='line'>    <span class="n">moves</span> <span class="o">=</span> <span class="n">get_best_moves</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="n">ships_remaining</span><span class="p">,</span><span class="n">pboard</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">row</span><span class="p">,</span><span class="n">col</span> <span class="o">=</span> <span class="n">moves</span><span class="o">[</span><span class="nb">rand</span><span class="p">(</span><span class="n">moves</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="o">]</span>
+</span><span class='line'>    <span class="vi">@logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;game state&#39;</span><span class="p">)</span> <span class="p">{</span><span class="s2">&quot;Making move </span><span class="si">#{</span><span class="n">row</span><span class="si">}</span><span class="s2">,</span><span class="si">#{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The logger has different severity levels, depending on whether we’re logging an error or just debugging information. There are multiple ways to pass messages to our logger. In this case I am passing a label as a string parameter, and a the bulk the message in a block. The result looks like the screenshot posted above.</p>
+
+<p>From a technical perspective, there isn’t anything difficult about the logger class. If the logging is too terse, debugging is difficult, and if it is too verbose, the logs grow out of control pretty quickly. Finding the right mix makes logger indespensible to debugging complex scenarios quickly.</p>
+
+<p>Ultimately, I found logger to be complementary to Rspec, rather than a replacement.  With Logger I can catch strange behavior and try to reproduce it, while with Rspec I can make sure to test for and prevent the same errors from happening again.</p>
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
     <a href="/blog/archives">Blog Archives</a>
@@ -260,6 +559,14 @@
     
       <li class="post">
         <a href="/blog/2014/03/28/custom-javascript-events-with-2048/">Custom Javascript Events with 2048</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/03/03/what-is-rack/">What is Rack, Really?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/16/logging-with-battleship/">Logging with Battleship</a>
       </li>
     
   </ul>

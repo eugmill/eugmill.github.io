@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>What is Rack, Really? - Eugene Codes</title>
+  <meta name="author" content="Eugene Millerman">
+
+  
+  <meta name="description" content="After spending some time on Ruby foundations, we’ve finally moved onto the web at Flatiron School&#8217;s’s 5th Ruby class. The first topic we &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://eugmill.github.io/blog/2014/03/03/what-is-rack">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Eugene Codes" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Eugene Codes</a></h1>
+  
+    <h2>Tales from a developing developer</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:eugmill.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">What Is Rack, Really?</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-03T08:09:39-05:00" pubdate data-updated="true">Mar 3<span>rd</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>After spending some time on Ruby foundations, we’ve finally moved onto the web at Flatiron School&#8217;s’s 5th Ruby class. The first topic we covered was <a href="http://rack.github.io/">rack</a>. According to the official site:</p>
+
+<blockquote><p>&ldquo;Rack provides a minimal interface between webservers supporting Ruby and Ruby frameworks.”</p></blockquote>
+
+<p>Well, that helps. Let’s break it down. What exactly is a web server? In its simplest form, you can implement a web server by doing the following:</p>
+
+<ol>
+<li>Listen to a port (80 most of the time) until a request comes in</li>
+<li>Deal with the request</li>
+<li>Output the response</li>
+<li>goto 1</li>
+</ol>
+
+
+<p>That sounds great! But we don’t want to implement that from scratch. Luckily, there are plenty of web servers already out there! Not only does rack let you easily switch between web servers, it also let’s you use the same middleware across different applications.</p>
+
+<h3>Taking a step back</h3>
+
+<p>In essence, there was a time where if you wanted to write a web app in Ruby, you had to write the interface to the server, which would change depending on the server you used. No more!</p>
+
+<p>Some big points to take away:</p>
+
+<ol>
+<li><p>Ruby is not a language for web development.
+Given the immense popularity of Rails, it’s easy to assume that Ruby was created as a language for web development. In reality, it was created as a general purpose language, and the tools for web development were added over time. Rack and rails are two such tools. The former is a framework, and Rack is the interface that connects the framework to the servers themselves.</p></li>
+<li><p>The web itself is language agnostic
+If we take a really big picture view of the web, it is just a bunch of http requests getting flung back and forth between computers. Everything is text and ultimately, whatever language is used on the server will have to create and receive http requests. Rack handles that aspect for Ruby applications.</p></li>
+</ol>
+
+
+<p>Sources:</p>
+
+<p><a href="http://stackoverflow.com/questions/15875941/creating-a-web-app-in-ruby-without-a-framework">http://stackoverflow.com/questions/15875941/creating-a-web-app-in-ruby-without-a-framework</a></p>
+
+<p><a href="http://www.youtube.com/watch?v=iJ-ZsWtHTIg">http://www.youtube.com/watch?v=iJ-ZsWtHTIg</a></p>
+
+<p><a href="http://rack.github.io/">http://rack.github.io/</a></p>
+
+<p><a href="http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html">http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Eugene Millerman</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-03-03T08:09:39-05:00" pubdate data-updated="true">Mar 3<span>rd</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rack/'>rack</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://eugmill.github.io/blog/2014/03/03/what-is-rack/" data-via="" data-counturl="http://eugmill.github.io/blog/2014/03/03/what-is-rack/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/02/16/logging-with-battleship/" title="Previous Post: Logging with Battleship">&laquo; Logging with Battleship</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/03/28/custom-javascript-events-with-2048/" title="Next Post: Custom Javascript Events with 2048">Custom Javascript Events with 2048 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/03/28/custom-javascript-events-with-2048/">Custom Javascript Events with 2048</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/03/03/what-is-rack/">What is Rack, Really?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/16/logging-with-battleship/">Logging with Battleship</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Eugene Millerman -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

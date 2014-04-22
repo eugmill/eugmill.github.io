@@ -1,16 +1,24 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
+        <loc>http://eugmill.github.io/blog/2014/02/16/logging-with-battleship/</loc>
+        <lastmod>2014-04-22T11:35:34-04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://eugmill.github.io/blog/2014/03/03/what-is-rack/</loc>
+        <lastmod>2014-04-22T09:18:08-04:00</lastmod>
+    </url>
+    <url>
         <loc>http://eugmill.github.io/blog/2014/03/28/custom-javascript-events-with-2048/</loc>
         <lastmod>2014-04-21T22:25:58-04:00</lastmod>
     </url>
     <url>
         <loc>http://eugmill.github.io/blog/archives/</loc>
-        <lastmod>2014-04-21T22:25:58-04:00</lastmod>
+        <lastmod>2014-04-22T11:35:34-04:00</lastmod>
     </url>
     <url>
         <loc>http://eugmill.github.io/</loc>
-        <lastmod>2014-04-21T22:25:58-04:00</lastmod>
+        <lastmod>2014-04-22T11:35:34-04:00</lastmod>
     </url>
     <url>
         <loc>http://eugmill.github.io/robots.txt</loc>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rack | Eugene Codes]]></title>
+  <link href="http://eugmill.github.io/blog/categories/rack/atom.xml" rel="self"/>
+  <link href="http://eugmill.github.io/"/>
+  <updated>2014-04-22T11:36:46-04:00</updated>
+  <id>http://eugmill.github.io/</id>
+  <author>
+    <name><![CDATA[Eugene Millerman]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[What is Rack, Really?]]></title>
+    <link href="http://eugmill.github.io/blog/2014/03/03/what-is-rack/"/>
+    <updated>2014-03-03T08:09:39-05:00</updated>
+    <id>http://eugmill.github.io/blog/2014/03/03/what-is-rack</id>
+    <content type="html"><![CDATA[<p>After spending some time on Ruby foundations, we’ve finally moved onto the web at Flatiron School's’s 5th Ruby class. The first topic we covered was <a href="http://rack.github.io/">rack</a>. According to the official site:</p>
+
+<blockquote><p>&ldquo;Rack provides a minimal interface between webservers supporting Ruby and Ruby frameworks.”</p></blockquote>
+
+<p>Well, that helps. Let’s break it down. What exactly is a web server? In its simplest form, you can implement a web server by doing the following:</p>
+
+<ol>
+<li>Listen to a port (80 most of the time) until a request comes in</li>
+<li>Deal with the request</li>
+<li>Output the response</li>
+<li>goto 1</li>
+</ol>
+
+
+<p>That sounds great! But we don’t want to implement that from scratch. Luckily, there are plenty of web servers already out there! Not only does rack let you easily switch between web servers, it also let’s you use the same middleware across different applications.</p>
+
+<h3>Taking a step back</h3>
+
+<p>In essence, there was a time where if you wanted to write a web app in Ruby, you had to write the interface to the server, which would change depending on the server you used. No more!</p>
+
+<p>Some big points to take away:</p>
+
+<ol>
+<li><p>Ruby is not a language for web development.
+Given the immense popularity of Rails, it’s easy to assume that Ruby was created as a language for web development. In reality, it was created as a general purpose language, and the tools for web development were added over time. Rack and rails are two such tools. The former is a framework, and Rack is the interface that connects the framework to the servers themselves.</p></li>
+<li><p>The web itself is language agnostic
+If we take a really big picture view of the web, it is just a bunch of http requests getting flung back and forth between computers. Everything is text and ultimately, whatever language is used on the server will have to create and receive http requests. Rack handles that aspect for Ruby applications.</p></li>
+</ol>
+
+
+<p>Sources:</p>
+
+<p><a href="http://stackoverflow.com/questions/15875941/creating-a-web-app-in-ruby-without-a-framework">http://stackoverflow.com/questions/15875941/creating-a-web-app-in-ruby-without-a-framework</a></p>
+
+<p><a href="http://www.youtube.com/watch?v=iJ-ZsWtHTIg">http://www.youtube.com/watch?v=iJ-ZsWtHTIg</a></p>
+
+<p><a href="http://rack.github.io/">http://rack.github.io/</a></p>
+
+<p><a href="http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html">http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html</a></p>
+]]></content>
+  </entry>
+  
+</feed>

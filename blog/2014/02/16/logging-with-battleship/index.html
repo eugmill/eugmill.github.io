@@ -1,224 +1,97 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Eugene Codes]]></title>
-  <link href="http://eugmill.github.io/atom.xml" rel="self"/>
-  <link href="http://eugmill.github.io/"/>
-  <updated>2014-04-22T11:36:46-04:00</updated>
-  <id>http://eugmill.github.io/</id>
-  <author>
-    <name><![CDATA[Eugene Millerman]]></name>
-    
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Logging with Battleship - Eugene Codes</title>
+  <meta name="author" content="Eugene Millerman">
 
   
-  <entry>
-    <title type="html"><![CDATA[Custom Javascript Events with 2048]]></title>
-    <link href="http://eugmill.github.io/blog/2014/03/28/custom-javascript-events-with-2048/"/>
-    <updated>2014-03-28T11:54:09-04:00</updated>
-    <id>http://eugmill.github.io/blog/2014/03/28/custom-javascript-events-with-2048</id>
-    <content type="html"><![CDATA[<p>After wasting a few hours playing with 2048, I realized that hey, I’m learning javascript, and 2048 is Javascript! I dove into the 2048 source code to see what I could find.</p>
+  <meta name="description" content="After the first week at flatiron School, I decided to punish challenge myself by joining the Ruby Fight Club meetup and signing myself up for the &hellip;">
+  
 
-<p>2048 is entirely client side, which means there is no server to manage. A high level view of the code is below:</p>
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<ul>
-<li><em>application.js</em> – Launches the game</li>
-<li><em>game_manager.js</em> – Acts as the main controller</li>
-<li><em>grid.js</em> – Represents the state of the game board</li>
-<li><em>tile.js</em> – Represents a single tile object</li>
-<li><em>html_actuator.js</em> – Deals with the front end and updating the html itself.</li>
-<li><em>keyboard_input_manager.js</em> – Deals with the input, whether it be keyboard or phone swipes</li>
-<li><em>local_storage_manager.js</em> – Deals with saving game state.</li>
+  
+  <link rel="canonical" href="http://eugmill.github.io/blog/2014/02/16/logging-with-battleship">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Eugene Codes" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+  
+
+</head>
+
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Eugene Codes</a></h1>
+  
+    <h2>Tales from a developing developer</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:eugmill.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
 </ul>
 
-
-<p>Great! Let’s take a look. When the game is started, the GameManager constructor takes in the html_actuator, keyboard_input_manager and storage_manager objects as arguments. We do some basic initializing, and then this:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">GameManager</span><span class="p">(</span><span class="nx">size</span><span class="p">,</span> <span class="nx">InputManager</span><span class="p">,</span> <span class="nx">Actuator</span><span class="p">,</span> <span class="nx">StorageManager</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="p">...</span>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">inputManager</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;move&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">move</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">inputManager</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;restart&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">inputManager</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s2">&quot;keepPlaying&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">restart</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">));</span>
-</span><span class='line'>  <span class="p">...</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Up until then, I had only really dealt with pretty basic DOM events. Click, hover, submit, were dependable and familiar. Wtf is restart?</p>
-
-<h3>Custom Events</h3>
-
-<p>Some digging led me to reading about custom events in Javascript. Custom events are pretty much exactly like DOM events, but both the dispatches and the listeners are defined by you.</p>
-
-<p>From the mozilla documentation:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// Listen for the event.</span>
-</span><span class='line'><span class="nx">elem</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;build&#39;</span><span class="p">,</span><span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{...},</span><span class="kc">false</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">// Dispath the event.</span>
-</span><span class='line'><span class="nx">elem</span><span class="p">.</span><span class="nx">dispathEvent</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>You can also include data in the events you throw.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">event</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CustomEvent</span><span class="p">(</span><span class="s1">&#39;build&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;detail&#39;</span><span class="o">:</span> <span class="nx">elem</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">time</span><span class="p">});</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">function</span> <span class="nx">eventHandler</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="nx">log</span><span class="p">(</span><span class="s1">&#39;The time is: &#39;</span><span class="o">+</span><span class="nx">e</span><span class="p">.</span><span class="nx">detail</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>So where does that leave us? Let&rsquo;s take another look at the 2048 code.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">KeyboardInputManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">on</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">event</span><span class="p">])</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">event</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">event</span><span class="p">].</span><span class="nx">push</span><span class="p">(</span><span class="nx">callback</span><span class="p">);</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">KeyboardInputManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">emit</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">callbacks</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">event</span><span class="p">];</span>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">callbacks</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">callbacks</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">callback</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">});</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">KeyboardInputManager</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">listen</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">...</span>
-</span><span class='line'>  <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;keydown&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="p">...</span>
-</span><span class='line'>        <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
-</span><span class='line'>        <span class="nx">self</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s2">&quot;move&quot;</span><span class="p">,</span> <span class="nx">mapped</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">...</span>
-</span><span class='line'>  <span class="p">});</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>The “on” method let’s us attach callbacks to custom events in the InputManager object. The emit function let’s us throw custom events with directional data attached to them.</p>
-
-<p>Let’s go over the steps in order</p>
-
-<ol>
-<li>I hit the up arrow on the keyboard</li>
-<li>The listen function captures it and “emits” a “move” event with data “up”</li>
-<li>The emit function calls the callback for “move”, which points to the move function in the GameManager.</li>
-</ol>
-
-
-<p>What about this weird bind thing? Well, the “on” method is defined in the InputManager object, but the callback function, “move”, is defined in the Gamemanager.</p>
-
-<p>We are telling the callback that when it refers to “this”, it should refer to the GameManager, not the InputManager, even though it will be called from the InputManager.</p>
-
-<p>In conclusion, reading through other people’s source code can be both educational and useful. Since I’ve started reading through it, not only have I become a better developer, but it makes playing 2048 itself a lot easier:</p>
-
-<p><img class="center" src="http://eugmill.github.io/images/2014-03-28-2048.png"></p>
-]]></content>
-  </entry>
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
   
-  <entry>
-    <title type="html"><![CDATA[What is Rack, Really?]]></title>
-    <link href="http://eugmill.github.io/blog/2014/03/03/what-is-rack/"/>
-    <updated>2014-03-03T08:09:39-05:00</updated>
-    <id>http://eugmill.github.io/blog/2014/03/03/what-is-rack</id>
-    <content type="html"><![CDATA[<p>After spending some time on Ruby foundations, we’ve finally moved onto the web at Flatiron School&#8217;s’s 5th Ruby class. The first topic we covered was <a href="http://rack.github.io/">rack</a>. According to the official site:</p>
-
-<blockquote><p>&ldquo;Rack provides a minimal interface between webservers supporting Ruby and Ruby frameworks.”</p></blockquote>
-
-<p>Well, that helps. Let’s break it down. What exactly is a web server? In its simplest form, you can implement a web server by doing the following:</p>
-
-<ol>
-<li>Listen to a port (80 most of the time) until a request comes in</li>
-<li>Deal with the request</li>
-<li>Output the response</li>
-<li>goto 1</li>
-</ol>
+  <header>
+    
+      <h1 class="entry-title">Logging With Battleship</h1>
+    
+    
+      <p class="meta">
+        
 
 
-<p>That sounds great! But we don’t want to implement that from scratch. Luckily, there are plenty of web servers already out there! Not only does rack let you easily switch between web servers, it also let’s you use the same middleware across different applications.</p>
-
-<h3>Taking a step back</h3>
-
-<p>In essence, there was a time where if you wanted to write a web app in Ruby, you had to write the interface to the server, which would change depending on the server you used. No more!</p>
-
-<p>Some big points to take away:</p>
-
-<ol>
-<li><p>Ruby is not a language for web development.
-Given the immense popularity of Rails, it’s easy to assume that Ruby was created as a language for web development. In reality, it was created as a general purpose language, and the tools for web development were added over time. Rack and rails are two such tools. The former is a framework, and Rack is the interface that connects the framework to the servers themselves.</p></li>
-<li><p>The web itself is language agnostic
-If we take a really big picture view of the web, it is just a bunch of http requests getting flung back and forth between computers. Everything is text and ultimately, whatever language is used on the server will have to create and receive http requests. Rack handles that aspect for Ruby applications.</p></li>
-</ol>
 
 
-<p>Sources:</p>
 
-<p><a href="http://stackoverflow.com/questions/15875941/creating-a-web-app-in-ruby-without-a-framework">http://stackoverflow.com/questions/15875941/creating-a-web-app-in-ruby-without-a-framework</a></p>
 
-<p><a href="http://www.youtube.com/watch?v=iJ-ZsWtHTIg">http://www.youtube.com/watch?v=iJ-ZsWtHTIg</a></p>
 
-<p><a href="http://rack.github.io/">http://rack.github.io/</a></p>
 
-<p><a href="http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html">http://chneukirchen.org/blog/archive/2007/02/introducing-rack.html</a></p>
-]]></content>
-  </entry>
   
-  <entry>
-    <title type="html"><![CDATA[Logging with Battleship]]></title>
-    <link href="http://eugmill.github.io/blog/2014/02/16/logging-with-battleship/"/>
-    <updated>2014-02-16T08:19:22-05:00</updated>
-    <id>http://eugmill.github.io/blog/2014/02/16/logging-with-battleship</id>
-    <content type="html"><![CDATA[<p>After the first week at flatiron School, I decided to <del>punish</del> challenge myself by joining the <a href="http://www.meetup.com/Ruby-Fight-Club/">Ruby Fight Club</a> meetup and signing myself up for the Battleship competition.</p>
+
+
+<time datetime="2014-02-16T08:19:22-05:00" pubdate data-updated="true">Feb 16<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>After the first week at flatiron School, I decided to <del>punish</del> challenge myself by joining the <a href="http://www.meetup.com/Ruby-Fight-Club/">Ruby Fight Club</a> meetup and signing myself up for the Battleship competition.</p>
 
 <p>The task at hand is to code a simple player class that plays battleship by doing two things:</p>
 
@@ -408,7 +281,122 @@ If we take a really big picture view of the web, it is just a bunch of http requ
 <p>From a technical perspective, there isn’t anything difficult about the logger class. If the logging is too terse, debugging is difficult, and if it is too verbose, the logs grow out of control pretty quickly. Finding the right mix makes logger indespensible to debugging complex scenarios quickly.</p>
 
 <p>Ultimately, I found logger to be complementary to Rspec, rather than a replacement.  With Logger I can catch strange behavior and try to reproduce it, while with Rspec I can make sure to test for and prevent the same errors from happening again.</p>
-]]></content>
-  </entry>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-</feed>
+
+<span class="byline author vcard">Posted by <span class="fn">Eugene Millerman</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-02-16T08:19:22-05:00" pubdate data-updated="true">Feb 16<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://eugmill.github.io/blog/2014/02/16/logging-with-battleship/" data-via="" data-counturl="http://eugmill.github.io/blog/2014/02/16/logging-with-battleship/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/03/03/what-is-rack/" title="Next Post: What is Rack, Really?">What is Rack, Really? &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/03/28/custom-javascript-events-with-2048/">Custom Javascript Events with 2048</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/03/03/what-is-rack/">What is Rack, Really?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/16/logging-with-battleship/">Logging with Battleship</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Eugene Millerman -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a> | Themed with <a href="https://github.com/lucaslew/whitespace">Whitespace</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
