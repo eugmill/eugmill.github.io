@@ -3,11 +3,11 @@
 # ----------------------- #
 
 url: http://eugmill.github.io
-title: My Octopress Blog
-subtitle: A blogging framework for hackers.
-author: Your Name
+title: Eugene Codes
+subtitle: Tales from a developing developer
+author: Eugene Millerman
 simple_search: http://google.com/search
-description:
+description: Personal blog of Eugene Millerman
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in
