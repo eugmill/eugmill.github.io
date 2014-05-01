@@ -27,7 +27,7 @@ The gist of it is this: Iterate through the string to make sure at most one char
 
 If two or more characters are unpaired, this breaks down. So for instance `lllo` has an unpaired `l` and therefore can't form a palindrome. 
 
-Looking at line 1, my first throught was that this was a good case for the ruby `inject` method (or `reduce`).
+Looking at line 2 above, my first throught was that this was a good case for the ruby `inject` method (or `reduce`).
 
 ```ruby
 def possible_palindrome?(string)
