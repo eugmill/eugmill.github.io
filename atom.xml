@@ -4,7 +4,7 @@
   <title><![CDATA[Eugene Codes]]></title>
   <link href="http://eugmill.github.io/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-04-25T09:51:34-04:00</updated>
+  <updated>2014-05-01T15:56:15-04:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Eugene Millerman]]></name>
@@ -12,6 +12,137 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Palindromes, Sets and XOR]]></title>
+    <link href="http://eugmill.github.io/blog/2014/05/01/palindromes-sets-xor/"/>
+    <updated>2014-05-01T15:10:48-04:00</updated>
+    <id>http://eugmill.github.io/blog/2014/05/01/palindromes-sets-xor</id>
+    <content type="html"><![CDATA[<p>My Flatiron School classmate Arielle Sullivan posted <a href="https://medium.com/p/ab6f4ef849d">her solution</a> to an interesting programming puzzle:</p>
+
+<blockquote><p>Determine whether the letters in a given string can be arranged to form a palindrome.</p></blockquote>
+
+<p>Her solutions is below:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">possible_palindrome?</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">uniq_chars</span> <span class="o">=</span> <span class="o">[]</span>
+</span><span class='line'>  <span class="n">string</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">next_char</span><span class="o">|</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">uniq_chars</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">next_char</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">uniq_chars</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">next_char</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="n">uniq_chars</span> <span class="o">&lt;&lt;</span> <span class="n">next_char</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">uniq_chars</span><span class="o">.</span><span class="n">length</span> <span class="o">&lt;=</span><span class="mi">1</span> <span class="o">?</span> <span class="kp">true</span> <span class="p">:</span> <span class="kp">false</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The gist of it is this: Iterate through the string to make sure at most one character is unpaired. So for instance with <code>lloo</code>, every character is paired up, so we can make the palindrome <code>lool</code>. The same with <code>llo</code> making the palindone <code>lol</code>.</p>
+
+<p>If two or more characters are unpaired, this breaks down. So for instance <code>lllo</code> has an unpaired <code>l</code> and therefore can&rsquo;t form a palindrome.</p>
+
+<p>Looking at line 1, my first throught was that this was a good case for the ruby <code>inject</code> method (or <code>reduce</code>).</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">possible_palindrome?</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">string</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="o">[]</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">uniq_chars</span><span class="p">,</span><span class="n">next_char</span><span class="o">|</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">uniq_chars</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">next_char</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">uniq_chars</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">next_char</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="n">uniq_chars</span> <span class="o">&lt;&lt;</span> <span class="n">next_char</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span><span class="o">.</span><span class="n">length</span> <span class="o">&lt;=</span><span class="mi">1</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Looking good! But something was bothering me. We&rsquo;re essentially doing the following:
+&ndash; If the array of uniques has a character, remove it.
+&ndash; If it doesn&rsquo;t have a character, add it.</p>
+
+<p>This is essentailly the <code>XOR</code> or <a href="http://en.wikipedia.org/wiki/Exclusive_or"><em>exclusive or</em></a> operator! In ruby the xor operator is the <code>^</code> character. In boolean expressions, it returns true if one of two expressions is true but not both.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="kp">true</span> <span class="o">^</span> <span class="kp">true</span>   <span class="c1">#=&gt;false</span>
+</span><span class='line'><span class="kp">true</span> <span class="o">^</span> <span class="kp">false</span>  <span class="c1">#=&gt;true</span>
+</span><span class='line'><span class="kp">false</span> <span class="o">^</span> <span class="kp">true</span>  <span class="c1">#=&gt;true</span>
+</span><span class='line'><span class="kp">false</span> <span class="o">^</span> <span class="kp">false</span> <span class="c1">#=&gt;false</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>How does this translate to sets and characters? Well, if we have two sets of characters, we can xor them together to get the characters in either but not in both. This is exactly what we want. Unforunately, you can&rsquo;t natively xor two arrays in ruby, but you can with the <a href="http://www.ruby-doc.org/stdlib-2.1.1/libdoc/set/rdoc/Set.html">Set</a> class. Let&rsquo;s give it a try:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;set&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">possible_palindrome?</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">string</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="no">Set</span><span class="o">.</span><span class="n">new</span> <span class="o">[]</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">uniq_chars</span><span class="p">,</span><span class="n">next_char</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">uniq_chars</span> <span class="o">^</span> <span class="o">[</span><span class="n">next_char</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span><span class="o">.</span><span class="n">length</span> <span class="o">&lt;=</span><span class="mi">1</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Even better! If we wanted to do this without the Set class, we can xor two arrays ourselves:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">arr1</span> <span class="o">=</span> <span class="o">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="o">]</span>
+</span><span class='line'><span class="n">arr2</span> <span class="o">=</span> <span class="o">[</span><span class="mi">3</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="n">arr1</span> <span class="o">+</span> <span class="n">arr2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">arr1</span> <span class="o">&amp;</span> <span class="n">arr2</span><span class="p">)</span> <span class="c1">#=&gt; [1,2,3,3] - [3] =&gt; [1,2]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&rsquo;s break this down. <code>(arr1 + arr2)</code> returns an array that combines the two arrays. <code>(arr1 &amp; arr2)</code> returns an array of items in both. Subtracting the latter from the former results in items that are in either one but not in both.</p>
+
+<p>So our final solution, sans sets would be:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">possible_palindrome?</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">string</span><span class="o">.</span><span class="n">chars</span><span class="o">.</span><span class="n">inject</span><span class="p">(</span><span class="o">[]</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">uniq_chars</span><span class="p">,</span><span class="n">next_char</span><span class="o">|</span>
+</span><span class='line'>    <span class="p">(</span><span class="n">uniq_chars</span> <span class="o">+</span> <span class="o">[</span><span class="n">next_char</span><span class="o">]</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">uniq_chars</span> <span class="o">&amp;</span> <span class="o">[</span><span class="n">next_char</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span><span class="o">.</span><span class="n">length</span> <span class="o">&lt;=</span><span class="mi">1</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Custom Javascript Events with 2048]]></title>
