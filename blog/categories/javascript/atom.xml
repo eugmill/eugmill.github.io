@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | Eugene Codes]]></title>
   <link href="http://eugmill.github.io/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-05-06T13:29:49-04:00</updated>
+  <updated>2014-05-06T13:30:58-04:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Eugene Millerman]]></name>
@@ -57,7 +57,7 @@ function GameManager(size, InputManager, Actuator, StorageManager) {
 // Listen for the event.
 elem.addEventListener(&lsquo;build&rsquo;,function (e) {&hellip;},false);</p>
 
-<p>// Dispath the event.
+<p>// Dispatch the event.
 elem.dispathEvent(event);
 ```</p>
 
@@ -109,7 +109,7 @@ KeyboardInputManager.prototype.on = function (event, callback) {
 }
 ```</p>
 
-<p>The “on” method let’s us attach callbacks to custom events in the InputManager object. The emit function let’s us throw custom events with directional data attached to them.</p>
+<p>The “on” method lets us attach callbacks to custom events in the InputManager object. The emit function lets us throw custom events with directional data attached to them.</p>
 
 <p>Let’s go over the steps in order</p>
 
