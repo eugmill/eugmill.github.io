@@ -4,7 +4,7 @@
   <title><![CDATA[Eugene Codes]]></title>
   <link href="http://eugmill.github.io/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-05-06T13:07:16-04:00</updated>
+  <updated>2014-05-06T13:16:20-04:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Eugene Millerman]]></name>
@@ -163,7 +163,7 @@
 
 <p>As a result, Rails gets even more meta and actually defines the finders as methods on the Model the first time they are called. This way, they are essentially cached, and the next call will no longer go through <code>method_missing</code>.</p>
 
-<p>Stay tuned for a  future post on other details of metaprogramming in Rails.</p>
+<p>Stay tuned for a future post on other details of metaprogramming in Rails with <code>define_method</code> and <code>instance_eval</code>.</p>
 ]]></content>
   </entry>
   
