@@ -42,7 +42,7 @@ From the mozilla documentation:
 // Listen for the event.
 elem.addEventListener('build',function (e) {...},false);
 
-// Dispath the event.
+// Dispatch the event.
 elem.dispathEvent(event);
 ```
 
@@ -85,7 +85,7 @@ KeyboardInputManager.prototype.listen = function () {
 }
 ```
 
-The “on” method let’s us attach callbacks to custom events in the InputManager object. The emit function let’s us throw custom events with directional data attached to them.
+The “on” method lets us attach callbacks to custom events in the InputManager object. The emit function lets us throw custom events with directional data attached to them.
 
 Let’s go over the steps in order
 
