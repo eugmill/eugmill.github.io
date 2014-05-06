@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | Eugene Codes]]></title>
   <link href="http://eugmill.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-05-06T12:22:24-04:00</updated>
+  <updated>2014-05-06T12:56:56-04:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Eugene Millerman]]></name>
@@ -121,7 +121,9 @@ These are called _ghost methods_ because if we call</code>whiskers.methods<code>
 
 <p>Coming back to Rails, we can see how <code>method_missing</code> can be used to dynamically define finders such as <code>find_by_name</code>, <code>find_by_age</code>, etc. However, going through <code>method_missing</code> every time can be a little slow.</p>
 
-<p>As a result, Rails gets even more meta and actually defines the finders as methods on the Model the first time they are called. This way, they are essentially cached, and the next call will no longer go through <code>method_missing</code>. I&rsquo;ll have to save that for another post.</p>
+<p>As a result, Rails gets even more meta and actually defines the finders as methods on the Model the first time they are called. This way, they are essentially cached, and the next call will no longer go through <code>method_missing</code>.</p>
+
+<p>Stay tuned for a  future post on other details of metaprogramming in Rails.</p>
 ]]></content>
   </entry>
   
