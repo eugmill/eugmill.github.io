@@ -91,4 +91,4 @@ Coming back to Rails, we can see how `method_missing` can be used to dynamically
 
 As a result, Rails gets even more meta and actually defines the finders as methods on the Model the first time they are called. This way, they are essentially cached, and the next call will no longer go through `method_missing`. 
 
-Stay tuned for a  future post on other details of metaprogramming in Rails. 
+Stay tuned for a future post on other details of metaprogramming in Rails with `define_method` and `instance_eval`. 
