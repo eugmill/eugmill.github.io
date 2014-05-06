@@ -317,7 +317,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>The gist of it is this: Iterate through the string to make sure at most one character is unpaired. So for instance with <code>lloo</code>, every character is paired up, so we can make the palindrome <code>lool</code>. The same with <code>llo</code> making the palindone <code>lol</code>.</p>
+<p>The gist of it is this: Iterate through the string to make sure at most one character is unpaired. So for instance with <code>lloo</code>, every character is paired up, so we can make the palindrome <code>lool</code>. The same with <code>llo</code> making the palindrome <code>lol</code>.</p>
 
 <p>If two or more characters are unpaired, this breaks down. So for instance <code>lllo</code> has an unpaired <code>l</code> and therefore can&rsquo;t form a palindrome.</p>
 
@@ -348,7 +348,7 @@
 &ndash; If the array of uniques has a character, remove it.
 &ndash; If it doesn&rsquo;t have a character, add it.</p>
 
-<p>This is essentailly the <code>XOR</code> or <a href="http://en.wikipedia.org/wiki/Exclusive_or"><em>exclusive or</em></a> operator! In ruby the xor operator is the <code>^</code> character. In boolean expressions, it returns true if one of two expressions is true but not both.</p>
+<p>This is essentially the <code>XOR</code> or <a href="http://en.wikipedia.org/wiki/Exclusive_or"><em>exclusive or</em></a> operator! In ruby the xor operator is the <code>^</code> character. In boolean expressions, it returns true if one of two expressions is true but not both.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -361,7 +361,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>How does this translate to sets and characters? Well, if we have two sets of characters, we can xor them together to get the characters in either but not in both. This is exactly what we want. Unforunately, you can&rsquo;t natively xor two arrays in ruby, but you can with the <a href="http://www.ruby-doc.org/stdlib-2.1.1/libdoc/set/rdoc/Set.html">Set</a> class. Let&rsquo;s give it a try:</p>
+<p>How does this translate to sets and characters? Well, if we have two sets of characters, we can xor them together to get the characters in either but not in both. This is exactly what we want. Unfortunately, you can&rsquo;t natively xor two arrays in ruby, but you can with the <a href="http://www.ruby-doc.org/stdlib-2.1.1/libdoc/set/rdoc/Set.html">Set</a> class. Let&rsquo;s give it a try:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
