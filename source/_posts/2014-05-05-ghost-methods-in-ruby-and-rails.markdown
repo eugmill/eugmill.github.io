@@ -69,7 +69,7 @@ Now, as long as our Animal class has a particular emotion, we can call `[emotion
 
 ## `respond_to?` and `respond_to_missing?`
 
-Now we need to be able to tell that our Animal class has a method called `confused_sound` but not `angry_sound`. The way we do that is by overriding the `respond_to?` or `respond_to_missing?` methods. `respond_to_missing?` has the advantage in that it allows us to use `whiskers.method` , such as `whiskers.method(confused_sound)`.
+Now we need to be able to tell that our Animal class has a method called `confused_sound` but not `angry_sound`. The way we do that is by overriding the `respond_to?` or `respond_to_missing?` methods. `respond_to_missing?` has the advantage in that it allows us to use `whiskers.method` , such as `whiskers.method(:confused_sound)`.
 
 ```ruby
 class Animal
