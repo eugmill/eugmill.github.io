@@ -23,7 +23,7 @@ def possible_palindrome?(string)
   uniq_chars.length <=1 ? true : false
 end
 ```
-The gist of it is this: Iterate through the string to make sure at most one character is unpaired. So for instance with `lloo`, every character is paired up, so we can make the palindrome `lool`. The same with `llo` making the palindone `lol`.
+The gist of it is this: Iterate through the string to make sure at most one character is unpaired. So for instance with `lloo`, every character is paired up, so we can make the palindrome `lool`. The same with `llo` making the palindrome `lol`.
 
 If two or more characters are unpaired, this breaks down. So for instance `lllo` has an unpaired `l` and therefore can't form a palindrome. 
 
@@ -45,7 +45,7 @@ Looking good! But something was bothering me. We're essentially doing the follow
 - If the array of uniques has a character, remove it.
 - If it doesn't have a character, add it.
 
-This is essentailly the `XOR` or [_exclusive or_](http://en.wikipedia.org/wiki/Exclusive_or) operator! In ruby the xor operator is the `^` character. In boolean expressions, it returns true if one of two expressions is true but not both.
+This is essentially the `XOR` or [_exclusive or_](http://en.wikipedia.org/wiki/Exclusive_or) operator! In ruby the xor operator is the `^` character. In boolean expressions, it returns true if one of two expressions is true but not both.
 
 ```ruby
 true ^ true   #=>false
@@ -53,7 +53,7 @@ true ^ false  #=>true
 false ^ true  #=>true
 false ^ false #=>false
 ```
-How does this translate to sets and characters? Well, if we have two sets of characters, we can xor them together to get the characters in either but not in both. This is exactly what we want. Unforunately, you can't natively xor two arrays in ruby, but you can with the [Set](http://www.ruby-doc.org/stdlib-2.1.1/libdoc/set/rdoc/Set.html) class. Let's give it a try:
+How does this translate to sets and characters? Well, if we have two sets of characters, we can xor them together to get the characters in either but not in both. This is exactly what we want. Unfortunately, you can't natively xor two arrays in ruby, but you can with the [Set](http://www.ruby-doc.org/stdlib-2.1.1/libdoc/set/rdoc/Set.html) class. Let's give it a try:
 ```ruby
 require 'set'
 
