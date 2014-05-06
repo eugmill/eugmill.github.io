@@ -89,6 +89,6 @@ These are called _ghost methods_ because if we call `whiskers.methods`, `confuse
 
 Coming back to Rails, we can see how `method_missing` can be used to dynamically define finders such as `find_by_name`, `find_by_age`, etc. However, going through `method_missing` every time can be a little slow. 
 
-As a result, Rails gets even more meta and actually defines the finders as methods on the Model the first time they are called. This way, they are essentially cached, and the next call will no longer go through `method_missing`. I'll have to save that for another post. 
+As a result, Rails gets even more meta and actually defines the finders as methods on the Model the first time they are called. This way, they are essentially cached, and the next call will no longer go through `method_missing`. 
 
-
+Stay tuned for a  future post on other details of metaprogramming in Rails. 
