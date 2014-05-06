@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | Eugene Codes]]></title>
   <link href="http://eugmill.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-05-05T13:14:02-04:00</updated>
+  <updated>2014-05-06T12:22:24-04:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Eugene Millerman]]></name>
@@ -12,6 +12,118 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Dynamic finders and Ghost methods in Ruby and Rails]]></title>
+    <link href="http://eugmill.github.io/blog/2014/05/05/ghost-methods-in-ruby-and-rails/"/>
+    <updated>2014-05-05T15:37:29-04:00</updated>
+    <id>http://eugmill.github.io/blog/2014/05/05/ghost-methods-in-ruby-and-rails</id>
+    <content type="html"><![CDATA[<p>Rails does a lot for you, including dynamically generating methods like <code>find_by_[attribute]</code>, for every attribute your model has. I had always assumed that rails generated the methods when you start it up. While it&rsquo;s true that rails generates the methods for you, it&rsquo;s the where and the how that&rsquo;s interesting.</p>
+
+<h2><code>method_missing</code></h2>
+
+<p>When you send an object a method in Ruby, it first looks for that method in the object itself, then it looks up the inheritance chain. What happens if it reaches the <code>Object</code> class and still can&rsquo;t find the method? It calls <code>method_missing</code>, which is defined on <code>Object</code>.</p>
+
+<p>```ruby
+class Animal
+  attr_accessor :sound</p>
+
+<p>  EMOTIONS = {confused:&lsquo;?&rsquo;,</p>
+
+<pre><code>          surprised:'!'}
+</code></pre>
+
+<p>  def initialize(sound)</p>
+
+<pre><code>self.sound = sound
+</code></pre>
+
+<p>  end</p>
+
+<p>  def confused_sound</p>
+
+<pre><code>sound + EMOTIONS[:confused]
+</code></pre>
+
+<p>  end</p>
+
+<p>end</p>
+
+<p>whiskers = Animal.new(&ldquo;meow&rdquo;)</p>
+
+<p>puts whiskers.sound #=> meow
+puts whiskers.confused_sound #=> meow?
+puts whiskers.surprised_sound #=> NoMethodError
+<code>``
+So how can we take advantage of this? By overriding</code>method_missing<code>, we can actually create dynamic methods on the fly. So before, we were adding the</code>[emotion]_sound` manually, now we can add them dynamically.</p>
+
+<p>```ruby
+class Animal
+  attr_accessor :sound</p>
+
+<p>  EMOTIONS = {confused:&lsquo;?&rsquo;,</p>
+
+<pre><code>          surprised:'!'}
+</code></pre>
+
+<p>  def initialize(sound)</p>
+
+<pre><code>self.sound = sound
+</code></pre>
+
+<p>  end</p>
+
+<p>  def method_missing(name, *args)</p>
+
+<pre><code>if match = EMOTIONS.keys.find{|emotion| name.match(/#{emotion}_sound/)}
+  sound + EMOTIONS[match]
+else
+  super
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>end</p>
+
+<p>whiskers = Animal.new(&ldquo;meow&rdquo;)</p>
+
+<p>puts whiskers.sound #=> meow
+puts whiskers.confused_sound #=> meow?
+puts whiskers.surprised_sound #=> meow!
+puts whiskers.angry_sound #=> NoMethodError
+```</p>
+
+<p>Now, as long as our Animal class has a particular emotion, we can call <code>[emotion]_sound</code> without defining it ourselves.</p>
+
+<h2><code>respond_to?</code> and <code>respond_to_missing?</code></h2>
+
+<p>Now we need to be able to tell that our Animal class has a method called <code>confused_sound</code> but not <code>angry_sound</code>. The way we do that is by overriding the <code>respond_to?</code> or <code>respond_to_missing?</code> methods. <code>respond_to_missing?</code> has the advantage in that it allows us to use <code>whiskers.method</code> , such as <code>whiskers.method(confused_sound)</code>.</p>
+
+<p>```ruby
+class Animal
+  &hellip;
+  def respond_to_missing?(name, include_private=false)</p>
+
+<pre><code>EMOTIONS.keys.any?{|emotion| name.match(/#{emotion}_sound/)} || super
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>whiskers.respond_to?(&ldquo;sound&rdquo;) #=> true
+whiskers.respond_to?(&ldquo;confused_sound&rdquo;) #=> true
+whiskers.respond_to?(&ldquo;angry_sound&rdquo;) #=> false
+<code>``
+These are called _ghost methods_ because if we call</code>whiskers.methods<code>,</code>confused_sound` won&rsquo;t show up.</p>
+
+<h2>Rails and Ghost methods</h2>
+
+<p>Coming back to Rails, we can see how <code>method_missing</code> can be used to dynamically define finders such as <code>find_by_name</code>, <code>find_by_age</code>, etc. However, going through <code>method_missing</code> every time can be a little slow.</p>
+
+<p>As a result, Rails gets even more meta and actually defines the finders as methods on the Model the first time they are called. This way, they are essentially cached, and the next call will no longer go through <code>method_missing</code>. I&rsquo;ll have to save that for another post.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Palindromes, Sets and XOR]]></title>
@@ -43,7 +155,7 @@ The gist of it is this: Iterate through the string to make sure at most one char
 
 <p>If two or more characters are unpaired, this breaks down. So for instance <code>lllo</code> has an unpaired <code>l</code> and therefore can&rsquo;t form a palindrome.</p>
 
-<p>Looking at line 2 above, my first throught was that this was a good case for the ruby <code>inject</code> method (or <code>reduce</code>).</p>
+<p>Looking at line 2 above, my first thought was that this was a good case for the ruby <code>inject</code> method (or <code>reduce</code>).</p>
 
 <p>```ruby
 def possible_palindrome?(string)

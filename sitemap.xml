@@ -14,7 +14,11 @@
     </url>
     <url>
         <loc>http://eugmill.github.io/blog/2014/05/01/palindromes-sets-xor/</loc>
-        <lastmod>2014-05-01T18:43:55-04:00</lastmod>
+        <lastmod>2014-05-05T17:26:40-04:00</lastmod>
+    </url>
+    <url>
+        <loc>http://eugmill.github.io/blog/2014/05/05/ghost-methods-in-ruby-and-rails/</loc>
+        <lastmod>2014-05-06T12:21:53-04:00</lastmod>
     </url>
     <url>
         <loc>http://eugmill.github.io/about/</loc>
@@ -22,11 +26,11 @@
     </url>
     <url>
         <loc>http://eugmill.github.io/blog/archives/</loc>
-        <lastmod>2014-05-01T18:43:55-04:00</lastmod>
+        <lastmod>2014-05-06T12:21:53-04:00</lastmod>
     </url>
     <url>
         <loc>http://eugmill.github.io/</loc>
-        <lastmod>2014-05-01T18:43:55-04:00</lastmod>
+        <lastmod>2014-05-06T12:21:53-04:00</lastmod>
     </url>
     <url>
         <loc>http://eugmill.github.io/robots.txt</loc>

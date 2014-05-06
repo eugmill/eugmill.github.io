@@ -9,7 +9,7 @@
   <meta name="author" content="Eugene Millerman">
 
   
-  <meta name="description" content="My Flatiron School classmate Arielle Sullivan posted her solution to an interesting programming puzzle: Determine whether the letters in a given &hellip;">
+  <meta name="description" content="Rails does a lot for you, including dynamically generating methods like find_by_[attribute], for every attribute your model has. I had always assumed &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,185 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2014/05/05/ghost-methods-in-ruby-and-rails/">Dynamic Finders and Ghost Methods in Ruby and Rails</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-05T15:37:29-04:00" pubdate data-updated="true">May 5<span>th</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Rails does a lot for you, including dynamically generating methods like <code>find_by_[attribute]</code>, for every attribute your model has. I had always assumed that rails generated the methods when you start it up. While it&rsquo;s true that rails generates the methods for you, it&rsquo;s the where and the how that&rsquo;s interesting.</p>
+
+<h2><code>method_missing</code></h2>
+
+<p>When you send an object a method in Ruby, it first looks for that method in the object itself, then it looks up the inheritance chain. What happens if it reaches the <code>Object</code> class and still can&rsquo;t find the method? It calls <code>method_missing</code>, which is defined on <code>Object</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Animal</span>
+</span><span class='line'>  <span class="kp">attr_accessor</span> <span class="ss">:sound</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">EMOTIONS</span> <span class="o">=</span> <span class="p">{</span><span class="ss">confused</span><span class="p">:</span><span class="s1">&#39;?&#39;</span><span class="p">,</span>
+</span><span class='line'>              <span class="ss">surprised</span><span class="p">:</span><span class="s1">&#39;!&#39;</span><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">sound</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">self</span><span class="o">.</span><span class="n">sound</span> <span class="o">=</span> <span class="n">sound</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">confused_sound</span>
+</span><span class='line'>    <span class="n">sound</span> <span class="o">+</span> <span class="no">EMOTIONS</span><span class="o">[</span><span class="ss">:confused</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">whiskers</span> <span class="o">=</span> <span class="no">Animal</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;meow&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">puts</span> <span class="n">whiskers</span><span class="o">.</span><span class="n">sound</span> <span class="c1">#=&gt; meow</span>
+</span><span class='line'><span class="nb">puts</span> <span class="n">whiskers</span><span class="o">.</span><span class="n">confused_sound</span> <span class="c1">#=&gt; meow?</span>
+</span><span class='line'><span class="nb">puts</span> <span class="n">whiskers</span><span class="o">.</span><span class="n">surprised_sound</span> <span class="c1">#=&gt; NoMethodError</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So how can we take advantage of this? By overriding <code>method_missing</code>, we can actually create dynamic methods on the fly. So before, we were adding the <code>[emotion]_sound</code> manually, now we can add them dynamically.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Animal</span>
+</span><span class='line'>  <span class="kp">attr_accessor</span> <span class="ss">:sound</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="no">EMOTIONS</span> <span class="o">=</span> <span class="p">{</span><span class="ss">confused</span><span class="p">:</span><span class="s1">&#39;?&#39;</span><span class="p">,</span>
+</span><span class='line'>              <span class="ss">surprised</span><span class="p">:</span><span class="s1">&#39;!&#39;</span><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">sound</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">self</span><span class="o">.</span><span class="n">sound</span> <span class="o">=</span> <span class="n">sound</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">method_missing</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">match</span> <span class="o">=</span> <span class="no">EMOTIONS</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">find</span><span class="p">{</span><span class="o">|</span><span class="n">emotion</span><span class="o">|</span> <span class="nb">name</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/</span><span class="si">#{</span><span class="n">emotion</span><span class="si">}</span><span class="sr">_sound/</span><span class="p">)}</span>
+</span><span class='line'>      <span class="n">sound</span> <span class="o">+</span> <span class="no">EMOTIONS</span><span class="o">[</span><span class="n">match</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="k">super</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">whiskers</span> <span class="o">=</span> <span class="no">Animal</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;meow&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">puts</span> <span class="n">whiskers</span><span class="o">.</span><span class="n">sound</span> <span class="c1">#=&gt; meow</span>
+</span><span class='line'><span class="nb">puts</span> <span class="n">whiskers</span><span class="o">.</span><span class="n">confused_sound</span> <span class="c1">#=&gt; meow?</span>
+</span><span class='line'><span class="nb">puts</span> <span class="n">whiskers</span><span class="o">.</span><span class="n">surprised_sound</span> <span class="c1">#=&gt; meow!</span>
+</span><span class='line'><span class="nb">puts</span> <span class="n">whiskers</span><span class="o">.</span><span class="n">angry_sound</span> <span class="c1">#=&gt; NoMethodError</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, as long as our Animal class has a particular emotion, we can call <code>[emotion]_sound</code> without defining it ourselves.</p>
+
+<h2><code>respond_to?</code> and <code>respond_to_missing?</code></h2>
+
+<p>Now we need to be able to tell that our Animal class has a method called <code>confused_sound</code> but not <code>angry_sound</code>. The way we do that is by overriding the <code>respond_to?</code> or <code>respond_to_missing?</code> methods. <code>respond_to_missing?</code> has the advantage in that it allows us to use <code>whiskers.method</code> , such as <code>whiskers.method(confused_sound)</code>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Animal</span>
+</span><span class='line'>  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">respond_to_missing?</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">include_private</span><span class="o">=</span><span class="kp">false</span><span class="p">)</span>
+</span><span class='line'>    <span class="no">EMOTIONS</span><span class="o">.</span><span class="n">keys</span><span class="o">.</span><span class="n">any?</span><span class="p">{</span><span class="o">|</span><span class="n">emotion</span><span class="o">|</span> <span class="nb">name</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sr">/</span><span class="si">#{</span><span class="n">emotion</span><span class="si">}</span><span class="sr">_sound/</span><span class="p">)}</span> <span class="o">||</span> <span class="k">super</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">whiskers</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="s2">&quot;sound&quot;</span><span class="p">)</span> <span class="c1">#=&gt; true</span>
+</span><span class='line'><span class="n">whiskers</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="s2">&quot;confused_sound&quot;</span><span class="p">)</span> <span class="c1">#=&gt; true</span>
+</span><span class='line'><span class="n">whiskers</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="s2">&quot;angry_sound&quot;</span><span class="p">)</span> <span class="c1">#=&gt; false</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>These are called <em>ghost methods</em> because if we call <code>whiskers.methods</code>, <code>confused_sound</code> won&rsquo;t show up.</p>
+
+<h2>Rails and Ghost methods</h2>
+
+<p>Coming back to Rails, we can see how <code>method_missing</code> can be used to dynamically define finders such as <code>find_by_name</code>, <code>find_by_age</code>, etc. However, going through <code>method_missing</code> every time can be a little slow.</p>
+
+<p>As a result, Rails gets even more meta and actually defines the finders as methods on the Model the first time they are called. This way, they are essentially cached, and the next call will no longer go through <code>method_missing</code>. I&rsquo;ll have to save that for another post.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2014/05/01/palindromes-sets-xor/">Palindromes, Sets and XOR</a></h1>
     
     
@@ -140,7 +319,7 @@
 
 <p>If two or more characters are unpaired, this breaks down. So for instance <code>lllo</code> has an unpaired <code>l</code> and therefore can&rsquo;t form a palindrome.</p>
 
-<p>Looking at line 2 above, my first throught was that this was a good case for the ruby <code>inject</code> method (or <code>reduce</code>).</p>
+<p>Looking at line 2 above, my first thought was that this was a good case for the ruby <code>inject</code> method (or <code>reduce</code>).</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -725,6 +904,10 @@ If we take a really big picture view of the web, it is just a bunch of http requ
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/05/05/ghost-methods-in-ruby-and-rails/">Dynamic finders and Ghost methods in Ruby and Rails</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2014/05/01/palindromes-sets-xor/">Palindromes, Sets and XOR</a>
