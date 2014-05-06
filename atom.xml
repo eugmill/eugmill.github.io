@@ -4,7 +4,7 @@
   <title><![CDATA[Eugene Codes]]></title>
   <link href="http://eugmill.github.io/atom.xml" rel="self"/>
   <link href="http://eugmill.github.io/"/>
-  <updated>2014-05-06T12:57:25-04:00</updated>
+  <updated>2014-05-06T13:07:16-04:00</updated>
   <id>http://eugmill.github.io/</id>
   <author>
     <name><![CDATA[Eugene Millerman]]></name>
@@ -130,7 +130,7 @@
 
 <h2><code>respond_to?</code> and <code>respond_to_missing?</code></h2>
 
-<p>Now we need to be able to tell that our Animal class has a method called <code>confused_sound</code> but not <code>angry_sound</code>. The way we do that is by overriding the <code>respond_to?</code> or <code>respond_to_missing?</code> methods. <code>respond_to_missing?</code> has the advantage in that it allows us to use <code>whiskers.method</code> , such as <code>whiskers.method(confused_sound)</code>.</p>
+<p>Now we need to be able to tell that our Animal class has a method called <code>confused_sound</code> but not <code>angry_sound</code>. The way we do that is by overriding the <code>respond_to?</code> or <code>respond_to_missing?</code> methods. <code>respond_to_missing?</code> has the advantage in that it allows us to use <code>whiskers.method</code> , such as <code>whiskers.method(:confused_sound)</code>.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
